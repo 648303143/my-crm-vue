@@ -23,3 +23,12 @@ export function addCustomer(data) {
     data
   })
 }
+
+export function deleteCustomer(data) {
+  return request({
+    url: 'http://localhost:8080/customer/delete',
+    method: 'post',
+    data
+  })
+}
+
