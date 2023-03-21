@@ -56,7 +56,7 @@ export default {
   data() {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
-        callback(new Error('用户名输入规则: 4到16位（只能包含字母，数字，下划线，减号）'))
+        callback(new Error('用户名输入规则: 4到30位（只能包含字母，数字）'))
       } else {
         callback()
       }

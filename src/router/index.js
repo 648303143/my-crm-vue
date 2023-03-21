@@ -56,13 +56,42 @@ export const constantRoutes = [
   },
 
   {
+    path: '/cc',
+    component: Layout,
+    name: 'cc',
+    meta: { title: '个人中心', icon: 'el-icon-truck' },
+    children: [
+      {
+        path: 'customer/query',
+        component: () => import('@/views/cc/index'),
+        name: 'customerQuery',
+        meta: { title: '客户查询', icon: 'el-icon-truck' }
+      },
+
+      {
+        path: 'order/record',
+        component: () => import('@/views/cc/order'),
+        name: 'orderRecord',
+        meta: { title: '我的订单', icon: 'el-icon-truck' }
+      },
+
+      {
+        path: 'assignment',
+        component: () => import('@/views/cc/assignment'),
+        name: 'assignment',
+        meta: { title: '我的任务', icon: 'el-icon-truck' }
+      }
+    ]
+  },
+
+  {
     path: '/customer',
     component: Layout,
     name: 'customer',
     children: [
       {
         path: 'manage',
-        component: () => import('@/views/table/customer'),
+        component: () => import('@/views/manage/customer'),
         name: 'manage',
         meta: { title: '客户管理', icon: 'el-icon-s-custom' }
       }
@@ -77,14 +106,14 @@ export const constantRoutes = [
     children: [
       {
         path: 'manage',
-        component: () => import('@/views/table/car'),
+        component: () => import('@/views/manage/car/car'),
         name: 'manage',
         meta: { title: '车源列表', icon: 'el-icon-truck' }
       },
 
       {
         path: 'add',
-        component: () => import('@/views/table/car'),
+        component: () => import('@/views/manage/car/newCar'),
         name: 'add',
         meta: { title: '新增车源', icon: 'el-icon-truck' }
       }
@@ -98,7 +127,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'manage',
-        component: () => import('@/views/table/business'),
+        component: () => import('@/views/manage/business'),
         name: '商家管理',
         meta: { title: '商家管理', icon: 'el-icon-s-shop' }
       }
@@ -112,44 +141,9 @@ export const constantRoutes = [
     children: [
       {
         path: 'manage',
-        component: () => import('@/views/table/order'),
+        component: () => import('@/views/manage/order'),
         name: '订单管理',
         meta: { title: '订单管理', icon: 'el-icon-s-order' }
-      }
-    ]
-  },
-
-  {
-    path: '/example',
-    component: Layout,
-    redirect: '/example/table',
-    name: 'Example',
-    meta: { title: 'Example', icon: 'el-icon-s-help' },
-    children: [
-      {
-        path: 'table',
-        name: 'Table',
-        component: () => import('@/views/table/index'),
-        meta: { title: 'Table', icon: 'table' }
-      },
-      {
-        path: 'tree',
-        name: 'Tree',
-        component: () => import('@/views/tree/index'),
-        meta: { title: 'Tree', icon: 'tree' }
-      }
-    ]
-  },
-
-  {
-    path: '/form',
-    component: Layout,
-    children: [
-      {
-        path: 'index',
-        name: 'Form',
-        component: () => import('@/views/form/index'),
-        meta: { title: 'Form', icon: 'form' }
       }
     ]
   },
@@ -162,7 +156,7 @@ export const constantRoutes = [
   //   meta: {
   //     title: 'Nested',
   //     icon: 'nested'
-  //   },
+  //   }
   //   children: [
   //     {
   //       path: 'menu1',

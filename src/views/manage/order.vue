@@ -1,15 +1,12 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.custId" placeholder="custId" clearable style="width: 180px;" class="filter-item"  />
-      <el-input v-model="listQuery.nickname" placeholder="昵称" clearable style="width: 180px;" class="filter-item"  />
-      <el-input v-model="listQuery.name" placeholder="姓名" clearable style="width: 100px;" class="filter-item"  />
-      <el-input v-model="listQuery.phone" placeholder="手机号" clearable style="width: 140px;" class="filter-item"  />
+      <el-input v-model="listQuery.orderId" placeholder="orderId" clearable style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.custId" placeholder="custId" clearable style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.username" placeholder="建单客服" clearable style="width: 180px;" class="filter-item" />
+      <el-input v-model="listQuery.state" placeholder="订单状态" clearable style="width: 100px;" class="filter-item" />
       <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" @click="handleFilter">
         搜索
-      </el-button>
-      <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
-        新增
       </el-button>
       <el-button class="filter-item" type="primary" icon="el-icon-refresh-left" @click="handleReset">
         重置
@@ -26,22 +23,25 @@
       style="width: 100%;"
     >
       <el-table-column label="ID" prop="id" align="center" width="60" />
+      <el-table-column label="OrderID" prop="orderId" width="80px" :show-overflow-tooltip="true" />
       <el-table-column label="CustID" prop="custId" width="80px" :show-overflow-tooltip="true" />
-      <el-table-column label="昵称" min-width="150px" :show-overflow-tooltip="true">
+      <el-table-column label="建单客服" min-width="100px" :show-overflow-tooltip="true">
         <template v-slot="scope">
-          <span>{{ scope.row.nickname }}</span>
+          <span>{{ scope.row.username }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="手机号" prop="phone" width="120px" />
-      <el-table-column label="姓名" prop="name" width="80px" />
-      <el-table-column label="性别" prop="sex" width="50px" :formatter="formatSex" />
-      <el-table-column label="城市" prop="city" width="80px" />
-      <el-table-column label="年龄" prop="age" width="80px" />
-      <el-table-column label="客户称呼" prop="custCall" width="80px" />
-      <el-table-column label="意向车型" prop="carType" width="80px" />
-      <el-table-column label="预算" prop="budget" width="100" />
-      <el-table-column label="意向等级" prop="intention" min-width="150px" :show-overflow-tooltip="true" />
-      <el-table-column label="意向等级" prop="intentionLevel" min-width="80px" :formatter="formatIntentionLevel" />
+      <el-table-column label="意向车源" prop="carTitle" width="200px" />
+      <el-table-column label="看车时间" width="80px">
+        <template v-slot="scope">
+          <span>{{ scope.row.lookTime }}</span>
+        </template>
+      </el-table-column>
+      <el-table-column label="是否贷款" prop="isLoad" width="60px" :formatter="formatBoolean" />
+      <el-table-column label="建单状态" prop="state" align="center" width="80px" :formatter="formatState" />
+      <el-table-column label="失败原因" prop="failReason" min-width="150px" :show-overflow-tooltip="true" />
+      <el-table-column label="备注" prop="remark" width="150" />
+      <el-table-column label="车源ID" prop="clueId" min-width="80px" :show-overflow-tooltip="true" />
+      <el-table-column label="线索ID" prop="clueId" min-width="80px" :show-overflow-tooltip="true" />
       <el-table-column label="创建时间" prop="createTime" min-width="160px">
         <template v-slot="scope">
           <span>{{ scope.row.createTime | timeFilter }}</span>
@@ -74,36 +74,42 @@
         label-position="left"
         label-width="auto"
         size="medium"
-        style="width: 400px; margin-left:50px;">
-        <el-form-item label="昵称" prop="nickname">
-          <el-input v-model="temp.nickname" maxlength="10" show-word-limit/>
+        style="width: 400px; margin-left:50px;"
+      >
+        <el-form-item label="建单客服" prop="username">
+          <el-input v-model="temp.username" />
         </el-form-item>
-        <el-form-item label="姓名" prop="name">
-          <el-input v-model="temp.name" />
+        <el-form-item label="车源ID" prop="carId">
+          <el-input v-model="temp.carId" />
         </el-form-item>
-        <el-form-item label="性别" prop="sex">
-          <el-radio-group v-model="temp.sex">
-            <el-radio :label="0">女</el-radio>
-            <el-radio :label="1">男</el-radio>
-            <el-radio :label="2">其他</el-radio>
+        <el-form-item label="是否贷款" prop="isLoad">
+          <el-radio-group v-model="temp.isLoad">
+            <el-radio :label="true">是</el-radio>
+            <el-radio :label="false">否</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="手机号" prop="phone">
-          <el-input v-model="temp.phone" clearable maxlength="11" show-word-limit />
+        <el-form-item label="看车时间" prop="lookTime">
+          <el-input v-model="temp.lookTime" />
         </el-form-item>
-        <el-form-item label="城市" prop="city">
-          <el-input v-model="temp.city" />
+        <el-form-item label="建单状态" prop="state">
+          <el-radio-group v-model="temp.state">
+            <el-radio :label="1">建单成功</el-radio>
+            <el-radio :label="2">建单失败</el-radio>
+          </el-radio-group>
         </el-form-item>
-        <el-form-item label="年龄" prop="age">
-          <el-input v-model="temp.age" />
+        <el-form-item v-show="temp.state === 2" label="失败原因" prop="failReason" type="textarea">
+          <el-input v-model="temp.failReason" />
+        </el-form-item>
+        <el-form-item label="备注" prop="remark" type="textarea">
+          <el-input v-model="temp.remark" />
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
         <el-button @click="dialogFormVisible = false">
-          Cancel
+          取消
         </el-button>
-        <el-button type="primary" @click="dialogStatus==='create'?createData():updateData()">
-          Confirm
+        <el-button type="primary" @click="updateData()">
+          确认
         </el-button>
       </div>
     </el-dialog>
@@ -111,14 +117,13 @@
 </template>
 
 <script>
-import { addCustomer, listCustomer, updateCustomer, deleteCustomer } from '@/api/customer'
-import { v4 as uuidv4 } from 'uuid'
+import { listOrder, updateOrder } from '@/api/order'
 import moment from 'moment'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
 
 export default {
-  name: 'CustomerManage',
+  name: 'ComplexTable',
   components: { Pagination },
   directives: { waves },
   filters: {
@@ -135,36 +140,30 @@ export default {
       listQuery: {
         current: 1,
         size: 10,
+        orderId: '',
         custId: '',
-        nickname: '',
-        name: '',
-        phone: ''
+        username: '',
+        state: null
       },
       temp: {
         id: null,
+        orderId: '',
         custId: '',
-        nickname: '',
-        name: '',
-        sex: '',
-        phone: '',
-        city: '',
-        age: ''
+        username: '',
+        carId: '',
+        isLoad: '',
+        lookTime: '',
+        state: '',
+        failReason: '',
+        remark: '',
+        clueId: ''
+
       },
       dialogFormVisible: false,
       dialogStatus: '',
       textMap: {
         update: '编辑',
         create: '新增'
-      },
-      dialogPvVisible: false,
-      pvData: [],
-      rules: {
-        nickname: [
-          { required: true, message: '请输入昵称', trigger: 'blur' }
-        ],
-        phone: [
-          { required: true, message: '请输入手机号', trigger: 'blur' }
-        ]
       }
     }
   },
@@ -172,12 +171,12 @@ export default {
     this.getList()
   },
   methods: {
-    formatSex(row, column, cellValue) {
+    formatState(row, column, cellValue) {
       let ret = '未知'
       if (cellValue === 1) {
-        ret = '男'
-      } else if (cellValue === 0) {
-        ret = '女'
+        ret = '建单成功'
+      } else if (cellValue === 2) {
+        ret = '建单失败'
       }
       return ret
     },
@@ -190,22 +189,9 @@ export default {
       }
       return ret
     },
-    formatIntentionLevel(row, column, cellValue) {
-      let ret = '未知'
-      if (cellValue === 0) {
-        ret = '无意向'
-      } else if (cellValue === 1) {
-        ret = '低'
-      } else if (cellValue === 2) {
-        ret = '中'
-      } else if (cellValue === 3) {
-        ret = '高'
-      }
-      return ret
-    },
     getList() {
       this.listLoading = true
-      listCustomer(this.listQuery).then(response => {
+      listOrder(this.listQuery).then(response => {
         this.list = response.data.records
         this.total = response.data.total
         this.listLoading = false
@@ -215,25 +201,20 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleCreate() {
-      this.resetTemp()
-      this.dialogStatus = 'create'
-      this.dialogFormVisible = true
-      this.$nextTick(() => {
-        this.$refs['dataForm'].clearValidate()
-      })
-    },
     resetTemp() {
       this.temp = {
         temp: {
-          id: undefined,
+          id: null,
+          orderId: '',
           custId: '',
-          nickname: '',
-          name: '',
-          sex: '',
-          phone: '',
-          city: '',
-          age: ''
+          username: '',
+          carId: '',
+          isLoad: '',
+          lookTime: '',
+          state: '',
+          failReason: '',
+          remark: '',
+          clueId: ''
         }
       }
     },
@@ -242,27 +223,16 @@ export default {
         listQuery: {
           current: 1,
           size: 10,
+          orderId: '',
           custId: '',
-          nickname: '',
-          name: '',
-          phone: ''
+          username: '',
+          state: null
         }
       }
     },
     handleReset() {
       this.resetQuery()
       this.getList()
-    },
-    createData() {
-      this.$refs['dataForm'].validate((valid) => {
-        if (valid) {
-          this.temp.custId = uuidv4()
-          addCustomer(this.temp).then(() => {
-            this.dialogFormVisible = false
-            this.getList()
-          })
-        }
-      })
     },
     handleUpdate(row) {
       this.temp = Object.assign({}, row.row) // copy obj
@@ -276,16 +246,14 @@ export default {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           const tempData = Object.assign({}, this.temp)
-          updateCustomer(tempData).then(() => {
+          if (tempData.state === 1) {
+            tempData.failReason = ''
+          }
+          updateOrder(tempData).then(() => {
             this.dialogFormVisible = false
             this.getList()
           })
         }
-      })
-    },
-    handleDelete(row) {
-      deleteCustomer(row.row.custId).then(() => {
-        this.getList()
       })
     }
   }
