@@ -41,7 +41,6 @@
       <el-table-column label="意向车型" prop="carType" width="80px" />
       <el-table-column label="预算" prop="budget" width="100" />
       <el-table-column label="意向等级" prop="intention" min-width="150px" :show-overflow-tooltip="true" />
-      <el-table-column label="意向等级" prop="intentionLevel" min-width="80px" :formatter="formatIntentionLevel" />
       <el-table-column label="创建时间" prop="createTime" min-width="160px">
         <template v-slot="scope">
           <span>{{ scope.row.createTime | timeFilter }}</span>

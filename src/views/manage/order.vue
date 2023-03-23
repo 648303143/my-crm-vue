@@ -117,7 +117,7 @@
 </template>
 
 <script>
-import { listOrder, updateOrder } from '@/api/order'
+import {deleteOrder, listOrder, updateOrder} from '@/api/order'
 import moment from 'moment'
 import waves from '@/directive/waves' // waves directive
 import Pagination from '@/components/Pagination'
@@ -254,6 +254,11 @@ export default {
             this.getList()
           })
         }
+      })
+    },
+    handleDelete(row) {
+      deleteOrder(row.row.orderId).then(() => {
+        this.getList()
       })
     }
   }

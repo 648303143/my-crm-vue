@@ -254,7 +254,7 @@ export default {
     this.getAllBrand()
   },
   methods: {
-    formatFuelType(cellValue) {
+    formatFuelType(row, column, cellValue) {
       let ret = '未知'
       if (cellValue === 1) {
         ret = '汽油'
@@ -267,7 +267,7 @@ export default {
       }
       return ret
     },
-    formatCarType(cellValue) {
+    formatCarType(row, column, cellValue) {
       let ret = '未知'
       if (cellValue === 1) {
         ret = '轿车'

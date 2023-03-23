@@ -63,7 +63,7 @@ export const constantRoutes = [
     children: [
       {
         path: 'customer/query',
-        component: () => import('@/views/cc/index'),
+        component: () => import('@/views/cc/customerQuery'),
         name: 'customerQuery',
         meta: { title: '客户查询', icon: 'el-icon-truck' }
       },
