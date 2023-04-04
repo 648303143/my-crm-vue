@@ -1,12 +1,12 @@
-import { login, logout, getInfo } from '@/api/user'
+import { login, logout, getInfo } from '@/api/login'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    role: ''
+    role: '',
+    permissions: []
   }
 }
 
@@ -24,15 +24,18 @@ const mutations = {
   },
   SET_ROLE: (state, role) => {
     state.role = role
+  },
+  SET_PERMISSIONS: (state, permissions) => {
+    state.permissions = permissions
   }
 }
 
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password, loginTime } = userInfo
+    const { username, password } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password, loginTime: loginTime }).then(response => {
+      login({ username: username.trim(), password: password }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data)
         setToken(data)
@@ -44,19 +47,21 @@ const actions = {
   },
 
   // get user info
-  getInfo({ commit, state }) {
+  getInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
+      getInfo().then(response => {
         const { data } = response
 
         if (!data) {
           return reject('Verification failed, please Login again.')
         }
 
-        const { username, role } = data
+        const { user, role, permissions } = data
+        const { username } = user
 
         commit('SET_NAME', username)
         commit('SET_ROLE', role)
+        commit('SET_PERMISSIONS', permissions)
         resolve(data)
       }).catch(error => {
         reject(error)
@@ -64,17 +69,27 @@ const actions = {
     })
   },
 
-  // user logout
+  // 退出系统
   logout({ commit, state }) {
     return new Promise((resolve, reject) => {
       logout(state.token).then(() => {
-        removeToken() // must remove  token  first
-        resetRouter()
-        commit('RESET_STATE')
+        commit('SET_TOKEN', '')
+        commit('SET_ROLES', [])
+        commit('SET_PERMISSIONS', [])
+        removeToken()
         resolve()
       }).catch(error => {
         reject(error)
       })
+    })
+  },
+
+  // 前端 登出
+  FedLogOut({ commit }) {
+    return new Promise(resolve => {
+      commit('SET_TOKEN', '')
+      removeToken()
+      resolve()
     })
   },
 

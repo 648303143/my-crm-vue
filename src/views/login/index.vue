@@ -50,6 +50,7 @@
 <script>
 import { validUsername } from '@/utils/validate'
 import moment from 'moment'
+import {Message} from "element-ui";
 
 export default {
   name: 'Login',
@@ -57,13 +58,6 @@ export default {
     const validateUsername = (rule, value, callback) => {
       if (!validUsername(value)) {
         callback(new Error('用户名输入规则: 4到30位（只能包含字母，数字）'))
-      } else {
-        callback()
-      }
-    }
-    const validatePassword = (rule, value, callback) => {
-      if (value.length < 8) {
-        callback(new Error('密码不能小于八位数'))
       } else {
         callback()
       }
@@ -77,7 +71,7 @@ export default {
       },
       loginRules: {
         username: [{ required: true, trigger: 'blur', validator: validateUsername }],
-        password: [{ required: true, trigger: 'blur', validator: validatePassword }]
+        password: [{ required: true, trigger: 'blur' }]
       },
       loading: false,
       passwordType: 'password',
@@ -111,9 +105,9 @@ export default {
           this.$store.dispatch('user/login', this.loginForm).then(() => {
             this.$router.push({ path: this.redirect || '/' })
             this.loading = false
-          }).catch(() => {
+          }).catch(error => {
             this.loading = false
-            this.$message.error('登录失败111')
+            Message.error(error || 'Has Error')
           })
         } else {
           console.log('error submit!!')

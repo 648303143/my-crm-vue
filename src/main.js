@@ -7,14 +7,25 @@ import 'element-ui/lib/theme-chalk/index.css'
 import locale from 'element-ui/lib/locale/lang/en' // lang i18n
 
 import '@/styles/index.scss' // global css
-
 import App from './App'
+
 import store from './store'
 import router from './router'
 import VueCookies from 'vue-cookies'
-import '@/icons' // icon
+import { download } from '@/utils/request'
 
 import '@/permission' // permission control
+import { parseTime, resetForm, addDateRange, selectDictLabel, selectDictLabels, handleTree } from '@/utils/conmmon';
+
+// 全局方法挂载
+
+Vue.prototype.parseTime = parseTime
+Vue.prototype.resetForm = resetForm
+Vue.prototype.addDateRange = addDateRange
+Vue.prototype.selectDictLabel = selectDictLabel
+Vue.prototype.selectDictLabels = selectDictLabels
+Vue.prototype.handleTree = handleTree
+Vue.prototype.download = download
 /**
  * If you don't want to use mock-server
  * you want to use MockJs for mock api

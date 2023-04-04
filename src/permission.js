@@ -26,15 +26,25 @@ router.beforeEach(async(to, from, next) => {
       next({ path: '/' })
       NProgress.done()
     } else {
-      const hasGetUserInfo = store.getters.name
-      if (hasGetUserInfo) {
+      // determine whether the user has obtained his permission roles through getInfo
+      const hasRole = store.getters.role && store.getters.role.length > 0
+      if (hasRole) {
         next()
       } else {
         try {
           // get user info
-          await store.dispatch('user/getInfo')
-
-          next()
+          store.dispatch('user/getInfo').then(() => {
+            store.dispatch('GenerateRoutes').then(accessRoutes => {
+              // 根据roles权限生成可访问的路由表
+              router.addRoutes(accessRoutes) // 动态添加可访问路由表
+              next({ ...to, replace: true }) // hack方法 确保addRoutes已完成
+            })
+          }).catch(err => {
+            store.dispatch('user/logout').then(() => {
+              Message.error(err)
+              next({ path: '/' })
+            })
+          })
         } catch (error) {
           // remove token and go to login page to re-login
           await store.dispatch('user/resetToken')
